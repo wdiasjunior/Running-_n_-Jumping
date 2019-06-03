@@ -1,12 +1,12 @@
-#include <windows.h>
+//#include <windows.h>
 #include <cstdlib> // standard definitions
 #include <iostream> // C++ I/O
 #include <GL/glut.h> // GLUT
 #include <GL/glu.h> // GLU
 #include <GL/gl.h> // OpenGL
-#include <math.h>
+//#include <math.h>
 //#include <conio.h>
-#define PI 3.14159265f
+//#define PI 3.14159265f
 using namespace std; // make std accessible
 
 //-lfreeglut
@@ -26,7 +26,7 @@ void myReshape(int w, int h) { // window is reshaped
     glutPostRedisplay(); // request redisplay
 }
 
-GLdouble y = 0;
+GLdouble y = 0; //max value must be 1.5 (values relative to 1270x720 screen size)
 
 void criaBoneco(){
 	
@@ -67,23 +67,26 @@ void myDisplay(void) { // (re)display callback
     glutSwapBuffers(); // swap buffers
 }
 
-float posY = 1.5;
-float velocityY = 0.0;
-float gravity = 0.5;
+GLdouble posY = 1.5;
+GLdouble yspeed = 0;
+GLdouble gravity = 0.3;
 //bool onGround = false;
+bool pulo = false;
 
-void fisica(bool pulo){
-	
+void fisica(){
 	if(pulo){
-		printf("pulo\n");
-		velocityY += gravity;
-		posY *= velocityY;
+		
+		yspeed += gravity;
+		posY += yspeed;
 		y += posY;
+		
+		printf("pulo  %g\n", yspeed);
 		
 		if(posY > 1.5){
 			posY = 1.5;
-			y += posY;
-			velocityY = 0;
+			y = posY * yspeed;
+			printf("%g ", y);
+			yspeed = 0;
 			pulo = false;			
 		}
 	}
@@ -91,7 +94,7 @@ void fisica(bool pulo){
 
 void cenario(){
 	//TODO
-	//if cube z position < 4.15 reset cube position to 15.85 (starting position) (values referent to 1270x720 screen size)
+	//if cube z position < 4.15 reset cube position to 15.85 (starting position) (values relative to 1270x720 screen size)
 	//uptade look at values so objects are seen from far away
 }
 
@@ -100,14 +103,14 @@ void colisao(){
 	//verificar se o boneco bate no cenario
 }
 
-void spaceBar(unsigned char c, int, int)
-{
+void spaceBar(unsigned char c, int, int){
 
     switch (c)
     {
 	    case ' ':
 	    {
-	     	fisica(true);  
+	    	pulo = true;
+	     	fisica();  
 	        break;
 	    }
     }
@@ -116,15 +119,17 @@ void spaceBar(unsigned char c, int, int)
 
 #define TEMPO 20
 
-void timer(int id)
-{
+void timer(int id){
 	//spaceBar(); //probably not necessary in this scope
 	//fisica();	//probably not necessary in this scope
 
 	//movimentoBoneco();
 	//cenario();
+	
+	glutKeyboardFunc(spaceBar);
+	
     glutPostRedisplay();
-    glutTimerFunc(TEMPO, timer, 0);
+    glutTimerFunc(TEMPO, timer, 10);
 }
 
 int main(int argc, char** argv) { // main program
@@ -136,7 +141,7 @@ int main(int argc, char** argv) { // main program
 
     glutDisplayFunc(myDisplay); // setup callbacks
     glutReshapeFunc(myReshape);
-	glutKeyboardFunc(spaceBar);
+	//glutKeyboardFunc(spaceBar);
 	glutTimerFunc(TEMPO, timer, 0);
 
     glutMainLoop(); // start it running
