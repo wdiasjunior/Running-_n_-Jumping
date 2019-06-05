@@ -30,13 +30,22 @@ GLdouble y = 0; //max value must be 1.5 (values relative to 1270x720 screen size
 
 void criaBoneco(){
 	
+	gl
 	glPushMatrix();
-		glPushMatrix();
+		glPushMatrix();//head
 	        glTranslatef(5, y, 7);
 	        glColor3f(1, 0, 0);
-	        glutSolidCube(1);
+	        glutSolidCube(0.5);
 	        glColor3f(1, 1, 1);
-	        glutWireCube(1.00001);
+	        glutWireCube(0.50001);
+	    glPopMatrix();
+	    
+	    glPushMatrix();//body
+	        glTranslatef(5, y, 7);
+	        glColor3f(1, 0, 0);
+	        glutSolidCube(0.5);
+	        glColor3f(1, 1, 1);
+	        glutWireCube(0.50001);
 	    glPopMatrix();
 	glPopMatrix();
 }
@@ -68,8 +77,8 @@ void myDisplay(void) { // (re)display callback
 }
 
 GLdouble posY = 1.5;
-GLdouble yspeed = 0;
-GLdouble gravity = 0.3;
+GLdouble yspeed = 1;
+GLdouble gravity = 0.5;
 //bool onGround = false;
 bool pulo = false;
 
@@ -85,8 +94,11 @@ void fisica(){
 		if(posY > 1.5){
 			posY = 1.5;
 			y = posY * yspeed;
+			if(y > 1.5){
+				y = 1.5;
+			}
 			printf("%g ", y);
-			yspeed = 0;
+			//yspeed = 0;
 			pulo = false;			
 		}
 	}
@@ -126,8 +138,10 @@ void timer(int id){
 	//movimentoBoneco();
 	//cenario();
 	
-	glutKeyboardFunc(spaceBar);
-	
+	y -= 0.1f;
+	if(y < 0){
+		y = 0;
+	}
     glutPostRedisplay();
     glutTimerFunc(TEMPO, timer, 10);
 }
@@ -141,7 +155,7 @@ int main(int argc, char** argv) { // main program
 
     glutDisplayFunc(myDisplay); // setup callbacks
     glutReshapeFunc(myReshape);
-	//glutKeyboardFunc(spaceBar);
+	glutKeyboardFunc(spaceBar);
 	glutTimerFunc(TEMPO, timer, 0);
 
     glutMainLoop(); // start it running
