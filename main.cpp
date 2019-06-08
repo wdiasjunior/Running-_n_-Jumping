@@ -1,12 +1,12 @@
 //#include <windows.h>
 #include <cstdlib> // standard definitions
 #include <iostream> // C++ I/O
-#include <GL/glut.h> // GLUT
-#include <GL/glu.h> // GLU
-#include <GL/gl.h> // OpenGL
+#include "GL/glut.h" // GLUT
+#include "GL/glu.h" // GLU
+#include "GL/gl.h" // OpenGL
 #include <math.h>
 //#include <conio.h>
-//#define PI 3.14159265f
+#define PI 3.14159265f
 using namespace std; // make std accessible
 
 //-lfreeglut
@@ -28,10 +28,7 @@ void myReshape(int w, int h) { // window is reshaped
 }
 
 GLdouble yBoneco = 0; //max value must be 1.5 (values relative to 1270x720 screen size)
-//GLdouble xBL = 0; //used for the back leg moviments
-//GLdouble xFL = 0; //used for the front leg moviments
-//GLdouble xBA = 0; //used for the back arm moviments
-//GLdouble xFA = 0; //used for the front arm moviments
+float headSpin = 0;
 GLdouble angle1 = 0; 
 GLdouble angle2 = 0;
 
@@ -42,7 +39,9 @@ void criaBoneco(){
 	glPushMatrix();
 		glPushMatrix();//back leg
 	        glTranslatef(5.15, -1.7, 7.1);
-	        glRotatef(angle1, 1, 0, 0);
+	        glTranslatef(0, 0.5, 0);
+	        glRotatef(angle2, 1, 0, 0);
+	        glTranslatef(0, -0.5, 0);
 	        glColor3f(1, 0, 0);
 	        glScalef(0.4, 2, 0.5);
 	        glutSolidCube(0.5);
@@ -52,7 +51,9 @@ void criaBoneco(){
 	
 		glPushMatrix();//back arm
 	        glTranslatef(5.45, -0.8, 7.1);
+			glTranslatef(0, 0.5, 0);
 	        glRotatef(angle1, 1, 0, 0);
+	        glTranslatef(0, -0.5, 0);
 	        glColor3f(1, 0, 0);
 	        glScalef(0.4, 2, 0.5);
 	        glutSolidCube(0.5);
@@ -62,7 +63,9 @@ void criaBoneco(){
 	    
 	    glPushMatrix();//front leg
 	        glTranslatef(4.8, -1.8, 7);
-	        glRotatef(angle2, 1, 0, 0);
+	        glTranslatef(0, 0.5, 0);
+	        glRotatef(angle1, 1, 0, 0);
+	        glTranslatef(0, -0.5, 0);
 	        glColor3f(1, 0, 0);
 	        glScalef(0.4, 2, 0.5);
 	        glutSolidCube(0.5);
@@ -81,7 +84,9 @@ void criaBoneco(){
 	    
 	    glPushMatrix();//front arm
 	        glTranslatef(4.45, -0.8, 7);
+	        glTranslatef(0, 0.5, 0);
 	        glRotatef(angle2, 1, 0, 0);
+	        glTranslatef(0, -0.5, 0);
 	        glColor3f(1, 0, 0);
 	        glScalef(0.4, 2, 0.5);
 	        glutSolidCube(0.5);
@@ -91,6 +96,7 @@ void criaBoneco(){
 	    
 		glPushMatrix();//head
 	        glTranslatef(4.9, 0, 7.1);
+	        glRotatef(headSpin, 0, 1, 0);
 	        glColor3f(1, 0, 0);
 	        glutSolidCube(0.5);
 	        glColor3f(1, 1, 1);
@@ -98,6 +104,34 @@ void criaBoneco(){
 	    glPopMatrix();
 	    
 	glPopMatrix();
+}
+
+float posCenario = 15.85;
+
+void cenario(){
+	//TODO
+	//if cube z position < 4.15 reset cube position to 15.85 (starting position) (values relative to 1270x720 screen size)
+	//uptade look at values so objects are seen from far away
+	
+	//posCenario *= 0.5;
+	posCenario -= 0.15;
+	
+	glPushMatrix();
+		glTranslatef(5, -1.5, posCenario);
+		//glTranslatef(0, 0, posCenario);
+        glColor3f(0, 0, 1);
+        glutSolidCube(1);
+        glColor3f(1, 1, 1);
+	    glutWireCube(1.0001);
+	glPopMatrix();
+	
+	if(posCenario <= 4.15){
+		posCenario = 15.85;
+	}
+	
+	//printf("%f\n", posCenario);
+	
+	//glutPostRedisplay();
 }
 
 void myDisplay(void) { // (re)display callback
@@ -111,10 +145,14 @@ void myDisplay(void) { // (re)display callback
            	  0, 1,  0);
 
 	glPushMatrix();
+    	cenario();
+    glPopMatrix();
+
+	glPushMatrix();
     	criaBoneco();
     glPopMatrix();
 
-    glutSwapBuffers(); // swap buffers
+	glutSwapBuffers(); // swap buffers
 }
 
 GLdouble posY = 1.5;
@@ -122,59 +160,56 @@ GLdouble yspeed = 1;
 GLdouble gravity = 0.5;
 //bool onGround = false;
 bool pulo = false;
+float a = 0;
+float amplitude = 33;
+float period = 200;
+float x;
 
 void fisica(){
+	//TODO
+	//make the first part of the jump smoother
+	//implement head spin with acceleration and deacceleration
+	
 	if(pulo){
-		
-		yspeed += gravity;
+		//x = 360 * cos(100) * sin(100);
+		//headSpin = (headSpin + x);
+		//printf("%f\n", headSpin);
+
 		posY += yspeed;
-		yBoneco += posY;
 		
-		//printf("pulo  %g\n", yspeed);
-		
-		if(posY > 1.5){
-			posY = 1.5;
+		if(posY > 2.5){
+			posY = 2.5;
 			yBoneco = posY * yspeed;
-			if(yBoneco > 1.5){
-				yBoneco = 1.5;
+			if(yBoneco > 2.5){
+				yBoneco = 2.5;
 			}
-			
-			//printf("%g ", yBoneco);
-			
-			//yspeed = 0;
 			pulo = false;			
 		}
 	}
 	
-	yBoneco -= 0.1f;
+	yBoneco -= 0.13f;
 	if(yBoneco < 0){
 		yBoneco = 0;
 	}
 }
 
-void movimentoBoneco(){
+void scoreSystem(){
 	//TODO
-	//rotate arms and legs in x axis
-
-	GLfloat i = 1.5;
-	
-	if(angle1 > 33){
-		i += -1;
-	}
-	if(angle1 < -33){
-		i -= 1;
-	}
-	
-	angle1 += i;
-    angle2 -= i;
-	
-    printf("%f   -   %f\n", angle1, angle2);
+	//implement a score system in order to make the game faster
 }
 
-void cenario(){
-	//TODO
-	//if cube z position < 4.15 reset cube position to 15.85 (starting position) (values relative to 1270x720 screen size)
-	//uptade look at values so objects are seen from far away
+void movimentoBoneco(){
+	
+	x = amplitude * cos(a) * sin(a);
+
+	angle1 = (angle1 + x) / 2;
+	angle2 = (angle2 - x) / 2;
+	
+	a += 0.1;
+	
+	//implement a score system in order to make the game faster
+
+    //printf("%f   -   %f   -   %f\n", angle1, angle2, a);
 }
 
 void colisao(){
@@ -189,7 +224,7 @@ void spaceBar(unsigned char c, int, int){
 	    case ' ':
 	    {
 	    	pulo = true;
-	     	fisica();  
+	     	//fisica();  
 	        break;
 	    }
     }
@@ -201,7 +236,8 @@ void spaceBar(unsigned char c, int, int){
 void timer(int id){
 	fisica();
 	movimentoBoneco();
-	//cenario();
+	cenario();
+	//colisao();
 	
     glutPostRedisplay();
     glutTimerFunc(TEMPO, timer, 10);
