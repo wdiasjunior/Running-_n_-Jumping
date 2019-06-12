@@ -1,4 +1,4 @@
-//#include <windows.h>
+#include <windows.h>
 #include <cstdlib> // standard definitions
 #include <iostream> // C++ I/O
 #include "GL/glut.h" // GLUT
@@ -17,7 +17,7 @@ using namespace std; // make std accessible
 //TODO
 //add lighting
 //fix boneco flying as spacebar is being hold down
-//when jump true spin head in y axis
+//when jump true spin head in y axis and spin arms like crazy in 360
 
 void myReshape(int w, int h) { // window is reshaped
     glViewport (0, 0, w, h); // update the viewport
@@ -28,7 +28,7 @@ void myReshape(int w, int h) { // window is reshaped
     glutPostRedisplay(); // request redisplay
 }
 
-GLdouble yBoneco = 0; //max value must be 1.5 (values relative to 1270x720 screen size)
+GLdouble yBoneco = 0; //max value must be 2.5 (values relative to 1270x720 screen size)
 float headSpin = 0;
 GLdouble angle1 = 0; 
 GLdouble angle2 = 0;
@@ -114,11 +114,10 @@ void cenario(){
 	//if cube z position < 4.15 reset cube position to 15.85 (starting position) (values relative to 1270x720 screen size)
 	//uptade look at values so objects are seen from far away
 	
-	//posCenario *= 0.5;
 	posCenario -= 0.15;
 	
 	glPushMatrix();
-		glTranslatef(5, -1.5, posCenario);
+		glTranslatef(5, -1.8, posCenario);
 		//glTranslatef(0, 0, posCenario);
         glColor3f(0, 0, 1);
         glutSolidCube(1);
@@ -129,10 +128,6 @@ void cenario(){
 	if(posCenario <= 4.15){
 		posCenario = 15.85;
 	}
-	
-	//printf("%f\n", posCenario);
-	
-	//glutPostRedisplay();
 }
 
 void myDisplay(void) { // (re)display callback
@@ -146,13 +141,13 @@ void myDisplay(void) { // (re)display callback
            	  0, 1,  0);
 
 	glPushMatrix();
-    	cenario();
-    glPopMatrix();
-
-	glPushMatrix();
     	criaBoneco();
     glPopMatrix();
 
+	glPushMatrix();
+    	cenario();
+    glPopMatrix();
+    
 	glutSwapBuffers(); // swap buffers
 }
 
@@ -161,7 +156,7 @@ GLdouble yspeed = 1;
 GLdouble gravity = 0.5;
 bool onGround = true;
 bool pulo = false;
-float a = 0;
+float theta = 0;
 float amplitude = 33;
 float period = 200;
 float x;
@@ -198,46 +193,58 @@ void fisica(){
 }
 
 int score = 0;
-bool colisionTest = false;
+bool collisionTest = false;
 
 void scoreSystem(){
 	//TODO
-	//implement a score system in order to make the game faster
-	if(colisionTest == false && posCenario <= 7.1){
+	//increase cenario speed as the score get higher
+	//add text to the screen to show the score
+	if(collisionTest == false && posCenario <= 6.9){
 		score++;	
 		printf("%d\n", score);
+		//glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, 1);
 	}
 	
-	//TODO
-	//add text to the screen to show the score
+//	void displayMapInfo() {
+//    	RenderString(mapInfoXPos, mapInfoYPos, mapName);
+//	}
+// 
+//	void RenderString(GLdouble x, GLdouble y, const std::string &string)
+//	{
+//	    glColor3d(1.0, 0.0, 0.0);
+//	    glRasterPos2d(x, y);
+//	    for (int n=0; n<string.size(); ++n) {
+//	        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[s]);
+//	    }
+//	}
 }
 
 void movimentoBoneco(){
 	
-	x = amplitude * cos(a) * sin(a);
+	x = amplitude * cos(theta) * sin(theta);
 
 	angle1 = (angle1 + x) / 2;
 	angle2 = (angle2 - x) / 2;
 	
-	a += 0.1;
-	
-	//implement a score system in order to make the game faster
-
-    //printf("%f   -   %f   -   %f\n", angle1, angle2, a);
+	theta += 0.1;
 }
 
 void colisao(){
 	//TODO
-	//verificar se o boneco bate no cenario
+	//implementar pausa do jogo e reinicio
 		
-	if (posCenario <= 8 && onGround == true){
-		colisionTest = true; 
-		system("pause");
-		if(colisionTest = true){
-			system("");
-			score = 0;
-		}	 
+	if(posCenario <= 8 && onGround == true){
+	//while(posCenario <= 8 && onGround == true){	
+		collisionTest = true;                                                                                                                   
+		
+//		if(collisionTest == true){
+//			collisionTest = false;
+//			score = 0;
+//			//break;
+//		}	 
+		//break;
 	}
+	
 }
 
 void spaceBar(unsigned char c, int, int){
@@ -282,3 +289,4 @@ int main(int argc, char** argv) { // main program
     glutMainLoop(); // start it running
     return 0; // ANSI C expects this
 }
+
