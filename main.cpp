@@ -16,6 +16,7 @@ using namespace std; // make std accessible
 
 //TODO
 //add lighting
+//fix boneco flying as spacebar is being hold down
 //when jump true spin head in y axis
 
 void myReshape(int w, int h) { // window is reshaped
@@ -158,7 +159,7 @@ void myDisplay(void) { // (re)display callback
 GLdouble posY = 1.5;
 GLdouble yspeed = 1;
 GLdouble gravity = 0.5;
-//bool onGround = false;
+bool onGround = true;
 bool pulo = false;
 float a = 0;
 float amplitude = 33;
@@ -171,6 +172,7 @@ void fisica(){
 	//implement head spin with acceleration and deacceleration
 	
 	if(pulo){
+		onGround = false;
 		//x = 360 * cos(100) * sin(100);
 		//headSpin = (headSpin + x);
 		//printf("%f\n", headSpin);
@@ -183,19 +185,31 @@ void fisica(){
 			if(yBoneco > 2.5){
 				yBoneco = 2.5;
 			}
-			pulo = false;			
+			pulo = false;
+						
 		}
 	}
 	
 	yBoneco -= 0.13f;
 	if(yBoneco < 0){
 		yBoneco = 0;
+		onGround = true;
 	}
 }
+
+int score = 0;
+bool colisionTest = false;
 
 void scoreSystem(){
 	//TODO
 	//implement a score system in order to make the game faster
+	if(colisionTest == false && posCenario <= 7.1){
+		score++;	
+		printf("%d\n", score);
+	}
+	
+	//TODO
+	//add text to the screen to show the score
 }
 
 void movimentoBoneco(){
@@ -215,6 +229,15 @@ void movimentoBoneco(){
 void colisao(){
 	//TODO
 	//verificar se o boneco bate no cenario
+		
+	if (posCenario <= 8 && onGround == true){
+		colisionTest = true; 
+		system("pause");
+		if(colisionTest = true){
+			system("");
+			score = 0;
+		}	 
+	}
 }
 
 void spaceBar(unsigned char c, int, int){
@@ -224,7 +247,7 @@ void spaceBar(unsigned char c, int, int){
 	    case ' ':
 	    {
 	    	pulo = true;
-	     	//fisica();  
+	     	fisica();  
 	        break;
 	    }
     }
@@ -237,7 +260,8 @@ void timer(int id){
 	fisica();
 	movimentoBoneco();
 	cenario();
-	//colisao();
+	colisao();
+	scoreSystem();
 	
     glutPostRedisplay();
     glutTimerFunc(TEMPO, timer, 10);
