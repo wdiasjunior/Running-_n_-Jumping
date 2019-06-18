@@ -33,6 +33,10 @@ float headSpin = 0;
 GLdouble angle1 = 0; 
 GLdouble angle2 = 0;
 
+void start(){
+	//TODO
+}
+
 void criaBoneco(){
 	
 	glTranslatef(0, yBoneco, 0); //used for the jump moviment
@@ -247,6 +251,14 @@ void colisao(){
 	
 }
 
+void gameOver(){
+	//TODO
+}
+
+void restart(){
+	//TODO
+}
+
 void spaceBar(unsigned char c, int, int){
 
     switch (c)
@@ -264,6 +276,7 @@ void spaceBar(unsigned char c, int, int){
 #define TEMPO 20
 
 void timer(int id){
+	//start();
 	fisica();
 	movimentoBoneco();
 	cenario();
