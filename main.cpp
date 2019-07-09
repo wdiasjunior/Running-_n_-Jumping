@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <cstdlib> // standard definitions
 #include <iostream> // C++ I/O
+#include <pthread.h>
 #include "GL/glut.h" // GLUT
 #include "GL/glu.h" // GLU
 #include "GL/gl.h" // OpenGL
@@ -35,6 +36,8 @@ GLdouble angle2 = 0;
 
 void start(){
 	//TODO
+	
+	//if first thread finishes call it again
 }
 
 void criaBoneco(){
@@ -233,13 +236,14 @@ void movimentoBoneco(){
 	theta += 0.1;
 }
 
-void colisao(){
+void* colisao(){
 	//TODO
 	//implementar pausa do jogo e reinicio
 		
 	if(posCenario <= 8 && onGround == true){
 	//while(posCenario <= 8 && onGround == true){	
-		collisionTest = true;                                                                                                                   
+		collisionTest = true;
+		//system("pause");                                                                                                                   
 		
 //		if(collisionTest == true){
 //			collisionTest = false;
@@ -293,6 +297,9 @@ int main(int argc, char** argv) { // main program
     glutInitWindowSize(1280, 720); // create a 400x400 window
     glutInitWindowPosition(350, 50); // ...in the upper left
     glutCreateWindow(argv[0]); // create the window
+
+	pthread_t t1;
+	pthread_create(&t1, NULL, colisao, NULL);
 
     glutDisplayFunc(myDisplay); // setup callbacks
     glutReshapeFunc(myReshape);
