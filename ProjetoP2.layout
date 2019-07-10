@@ -1,7 +1,18 @@
 [Editor_0]
-CursorCol=16
-CursorRow=247
-TopLine=55
+<<<<<<< Updated upstream
+CursorCol=1
+CursorRow=234
+TopLine=99
+=======
+CursorCol=1
+<<<<<<< Updated upstream
+CursorRow=279
+TopLine=82
+=======
+CursorRow=265
+TopLine=1
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 LeftChar=1
 [Editors]
 Order=0

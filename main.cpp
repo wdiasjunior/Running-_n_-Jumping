@@ -34,12 +34,6 @@ float headSpin = 0;
 GLdouble angle1 = 0; 
 GLdouble angle2 = 0;
 
-void start(){
-	//TODO
-	
-	//if first thread finishes call it again
-}
-
 void criaBoneco(){
 	
 	glTranslatef(0, yBoneco, 0); //used for the jump moviment
@@ -209,21 +203,10 @@ void scoreSystem(){
 	if(collisionTest == false && posCenario <= 6.9){
 		score++;	
 		printf("%d\n", score);
-		//glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, 1);
 	}
-	
-//	void displayMapInfo() {
-//    	RenderString(mapInfoXPos, mapInfoYPos, mapName);
-//	}
-// 
-//	void RenderString(GLdouble x, GLdouble y, const std::string &string)
-//	{
-//	    glColor3d(1.0, 0.0, 0.0);
-//	    glRasterPos2d(x, y);
-//	    for (int n=0; n<string.size(); ++n) {
-//	        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[s]);
-//	    }
-//	}
+	if(collisionTest){
+		score = 0;
+	}
 }
 
 void movimentoBoneco(){
@@ -236,31 +219,18 @@ void movimentoBoneco(){
 	theta += 0.1;
 }
 
-void* colisao(){
-	//TODO
-	//implementar pausa do jogo e reinicio
-		
+bool perdeuMane = false;
+
+void start(){
+	perdeuMane = false;
+	collisionTest = false;
+}
+
+void colisao(){
 	if(posCenario <= 8 && onGround == true){
-	//while(posCenario <= 8 && onGround == true){	
 		collisionTest = true;
-		//system("pause");                                                                                                                   
-		
-//		if(collisionTest == true){
-//			collisionTest = false;
-//			score = 0;
-//			//break;
-//		}	 
-		//break;
+		perdeuMane = true;
 	}
-	
-}
-
-void gameOver(){
-	//TODO
-}
-
-void restart(){
-	//TODO
 }
 
 void spaceBar(unsigned char c, int, int){
@@ -273,21 +243,34 @@ void spaceBar(unsigned char c, int, int){
 	     	fisica();  
 	        break;
 	    }
+	    case '\r':
+	    {
+    		start();
+			break;
+		}
     }
     glutPostRedisplay();
+}
+
+void gameOver(){
+	if(perdeuMane){
+		Sleep(1000);
+		start();
+	}
 }
 
 #define TEMPO 20
 
 void timer(int id){
-	//start();
 	fisica();
 	movimentoBoneco();
 	cenario();
 	colisao();
 	scoreSystem();
+	gameOver();
 	
     glutPostRedisplay();
+	
     glutTimerFunc(TEMPO, timer, 10);
 }
 
@@ -298,14 +281,11 @@ int main(int argc, char** argv) { // main program
     glutInitWindowPosition(350, 50); // ...in the upper left
     glutCreateWindow(argv[0]); // create the window
 
-	pthread_t t1;
-	pthread_create(&t1, NULL, colisao, NULL);
-
-    glutDisplayFunc(myDisplay); // setup callbacks
+	glutDisplayFunc(myDisplay); // setup callbacks
     glutReshapeFunc(myReshape);
 	glutKeyboardFunc(spaceBar);
 	glutTimerFunc(TEMPO, timer, 0);
-
+    
     glutMainLoop(); // start it running
     return 0; // ANSI C expects this
 }
